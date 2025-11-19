@@ -5,7 +5,7 @@ from pathlib import Path
 
 import click
 
-from gibr import notify
+from gibr.notify import success, warning
 from gibr.registry import TRACKER_REGISTRY
 
 
@@ -35,7 +35,7 @@ def init():
 
     tracker_key, info = options[choice - 1]
     if not info["supported"]:
-        notify.warning(f"{info['display_name']} support is coming soon — stay tuned!")
+        warning(f"{info['display_name']} support is coming soon — stay tuned!")
         return
 
     tracker_cls = info["class"]
@@ -52,14 +52,11 @@ def init():
             ".gibrconfig already exists. Overwrite?", default=False
         )
         if not overwrite:
-            notify.warning("Operation canceled.")
+            warning("Operation canceled.")
             return
 
     with open(path, "w") as f:
         config.write(f)
 
-    notify.success(f"Created {path} with {info['display_name']} settings")
+    success(f"Created {path} with {info['display_name']} settings")
     click.secho("You're all set! Try: `gibr issues`\n", fg="cyan")
-    notify.info("""Customize your `.gibrconfig`:
-  - Customize branch name format: set `branch_name_format` (default: "{issue}-{title}")
-  - Disable automatic push: set `push = False` to prevent pushing""")
